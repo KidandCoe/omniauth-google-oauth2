@@ -11,9 +11,8 @@ module OmniAuth
       option :authorize_options, [:scope, :approval_prompt, :access_type, :state, :hd]
 
       option :client_options, {
-        :site          => 'https://accounts.google.com',
-        :authorize_url => '/o/oauth2/auth',
-        :token_url     => '/o/oauth2/token'
+        site: 'https://www.googleapis.com',
+        token_url: '/oauth2/v1/tokeninfo',
       }
 
       def authorize_params
@@ -58,6 +57,11 @@ module OmniAuth
 
       def raw_info
         @raw_info ||= access_token.get('https://www.googleapis.com/oauth2/v1/userinfo').parsed
+      end
+
+      def build_access_token
+        access_token = request.params["code"]
+        ::OAuth2::AccessToken.from_hash(client, access_token)
       end
 
       private
